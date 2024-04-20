@@ -1,3 +1,4 @@
+import 'package:chat_app/views/home_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -20,11 +21,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.dark,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Lets Chat?"),
-        ),
-      ),
+      home: HomeView(),
     );
   }
 }
