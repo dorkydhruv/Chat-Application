@@ -5,16 +5,24 @@ import 'package:flutter/material.dart';
 
 @immutable
 class UserPayload extends MapView<String, String> {
-  final String userId;
   final String? displayName;
   final String? email;
+  final String? password;
   UserPayload({
-    required this.userId,
     required this.displayName,
     required this.email,
+    required this.password,
   }) : super({
           Fieldnames.displayName: displayName ?? "",
-          Fieldnames.userId: userId,
           Fieldnames.email: email ?? "",
+          Fieldnames.password: password ?? "",
         });
+
+  toJson() {
+    return {
+      Fieldnames.displayName: displayName,
+      Fieldnames.email: email,
+      Fieldnames.password: password,
+    };
+  }
 }

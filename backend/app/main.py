@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI, WebSocket,status,HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base,get_db
 from sqlalchemy.orm import Session
 from . import schemas
@@ -6,7 +7,16 @@ from . import models
 from . import utils
 from . import oauth
 app = FastAPI()
-
+origins=[
+    "*",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/")
 async def get():

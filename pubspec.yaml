@@ -38,6 +38,8 @@ dependencies:
   flutter_webrtc_wrapper: ^1.0.2
   web_socket_channel: ^2.4.5
   hooks_riverpod: ^2.5.1
+  dio: ^5.4.3+1
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
