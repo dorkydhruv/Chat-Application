@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from . import schemas
 from . import models
 from . import utils
+from . import oauth
 app = FastAPI()
 
 
@@ -26,7 +27,10 @@ async def login(user:schemas.UserLogin,db:Session=Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="No such user")
     if utils.verify_password(user.password,db_user.password):
-        return db_user
+        data = {
+            "userId":db_user.userId,
+        }
+        return {"access_token":oauth.create_access_token(data),"token_type":"bearer"}
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Invalid auth")
 
@@ -36,3 +40,9 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         data = await websocket.receive_text()
         await websocket.send_text(f"User sent: {data}")
+
+@app.get("/test")
+def test(user: schemas.UserOut = Depends(oauth.get_current_user)):
+    return user
+
+
