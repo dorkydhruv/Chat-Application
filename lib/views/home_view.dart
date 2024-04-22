@@ -36,9 +36,9 @@ class HomeView extends StatelessWidget {
                         const InputDecoration(labelText: 'Display Name'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // Call the CreateUser.createUser method
-                      const CreateUser().createUser(
+                      await const CreateUser().createUser(
                         displayName: displayNameEditingController.text,
                         email: emailEditingController.text,
                         password: passwordEditingController.text,

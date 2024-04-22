@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'package:chat_app/state/fieldnames.dart';
 
 class User extends MapView<String, String?> {
-  final String userId;
+  final int userId;
   final String displayName;
   final String? email;
   final String createdAt;
@@ -14,7 +14,7 @@ class User extends MapView<String, String?> {
     required this.email,
     required this.createdAt,
   }) : super({
-          'userId': userId,
+          'userId': userId.toString(),
           'displayName': displayName,
           'email': email,
           'createdAt': createdAt
