@@ -3,14 +3,13 @@ import 'dart:convert';
 import 'package:chat_app/constants.dart';
 import 'package:chat_app/state/user/models/user.dart';
 import 'package:chat_app/state/user/models/user_payload.dart';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 @immutable
 class CreateUser {
   const CreateUser();
-  Future<bool> createUser({
+  static Future<bool> createUser({
     required String displayName,
     required String email,
     required String password,
@@ -34,7 +33,7 @@ class CreateUser {
         },
       );
       final user = User.fromJson(jsonDecode(response.body));
-      print(user.createdAt);
+      print(user);
       return true;
     } catch (e) {
       print(e);
