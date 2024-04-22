@@ -54,8 +54,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         isAuth: true,
         user: userdata,
       );
+      print(userdata);
+      Helper.storeId(userdata.userId);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -83,12 +87,16 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
               "true", // Required for cookies, authorization headers with HTTPS
         },
       );
+
       final user = User.fromJson(jsonDecode(response.body));
-      state.copyWith(isLoading: false, isAuth: true, user: user);
+      print(user);
+      state.copyWith(isLoading: false, isAuth: false, user: user);
       return true;
     } catch (e) {
       state.copyWith(isLoading: false, isAuth: false, error: e.toString());
       return false;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -116,10 +124,14 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         isAuth: true,
         user: userdata,
       );
+      print(userdata);
+      Helper.storeId(userdata.userId);
       return true;
     } catch (e) {
       state.copyWith(isLoading: false, isAuth: false, error: e.toString());
       return false;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 }

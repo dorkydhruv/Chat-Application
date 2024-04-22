@@ -21,7 +21,7 @@ class Helper {
     sf.setInt(USERID, id);
   }
 
-  static Future<int> getId(int id) async {
+  static Future<int> getId() async {
     final sf = await SharedPreferences.getInstance();
     return sf.getInt(USERID) ?? 0;
   }
