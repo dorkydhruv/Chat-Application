@@ -44,6 +44,7 @@ async def login(user:schemas.UserLogin,db:Session=Depends(get_db)):
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Invalid auth")
 
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -51,7 +52,7 @@ async def websocket_endpoint(websocket: WebSocket):
         data = await websocket.receive_text()
         await websocket.send_text(f"User sent: {data}")
 
-@app.get("/test")
+@app.get("/check-access")
 def test(user: schemas.UserOut = Depends(oauth.get_current_user)):
     return user
 

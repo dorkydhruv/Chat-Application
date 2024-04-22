@@ -15,4 +15,14 @@ class Helper {
     final sf = await SharedPreferences.getInstance();
     return sf.getString(ACCESS_TOKEN) ?? "";
   }
+
+  static Future<void> storeId(int id) async {
+    final sf = await SharedPreferences.getInstance();
+    sf.setInt(USERID, id);
+  }
+
+  static Future<int> getId(int id) async {
+    final sf = await SharedPreferences.getInstance();
+    return sf.getInt(USERID) ?? 0;
+  }
 }
