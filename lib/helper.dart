@@ -16,6 +16,11 @@ class Helper {
     return sf.getString(ACCESS_TOKEN) ?? "";
   }
 
+  static Future<void> removeToken() async {
+    final sf = await SharedPreferences.getInstance();
+    sf.remove(ACCESS_TOKEN);
+  }
+
   static Future<void> storeId(int id) async {
     final sf = await SharedPreferences.getInstance();
     sf.setInt(USERID, id);
@@ -24,5 +29,10 @@ class Helper {
   static Future<int> getId() async {
     final sf = await SharedPreferences.getInstance();
     return sf.getInt(USERID) ?? 0;
+  }
+
+  static Future<void> removeId() async {
+    final sf = await SharedPreferences.getInstance();
+    sf.remove(USERID);
   }
 }

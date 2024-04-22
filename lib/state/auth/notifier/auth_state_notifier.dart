@@ -134,4 +134,17 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(isLoading: false);
     }
   }
+
+  Future<void> logout() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      await Helper.removeToken();
+      await Helper.removeId();
+      state = state.copyWith(isLoading: false, isAuth: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
 }

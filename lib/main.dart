@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:chat_app/helper.dart';
 import 'package:chat_app/state/auth/providers/auth_state_provider.dart';
 import 'package:chat_app/state/auth/providers/is_auth.dart';
 import 'package:chat_app/state/auth/providers/is_loading.dart';
@@ -23,29 +22,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isLoggedIn = false;
-
-  getUserLoggedInState() async {
-    await Helper.getId().then((id) {
-      if (id != 0) {
-        setState(() {
-          isLoggedIn = true;
-        });
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUserLoggedInState();
-    Timer.periodic(Duration(seconds: 4), (_) {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Chat App',
+      title: 'Application',
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark(
         useMaterial3: true,
@@ -63,6 +43,8 @@ class _MyAppState extends State<MyApp> {
               LoadingScreen.instance().hide();
             }
           });
+          ref.read(authStateProvider.notifier).checkAccess();
+          final isLoggedIn = ref.watch(isAuthenticated);
           return isLoggedIn ? const HomeView() : const LoginView();
         },
       ),
