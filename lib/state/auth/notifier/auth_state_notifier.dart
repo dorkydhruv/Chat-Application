@@ -109,7 +109,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         isAuth: true,
         user: userdata,
       );
-      print(state.isAuth);
       Helper.storeId(userdata.userId);
       return true;
     } catch (e) {
