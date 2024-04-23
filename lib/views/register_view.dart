@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:chat_app/snackbar.dart';
 import 'package:chat_app/state/auth/providers/auth_state_provider.dart';
 import 'package:flutter/material.dart';
@@ -79,11 +77,16 @@ class RegisterView extends ConsumerWidget {
                           displayName: displayNameController.text);
                   if (created) {
                     FlutterSnackbar.showSnackbar(
-                        "User created Successfully. Now Login!", context);
+                        "User created Successfully. Now Login!",
+                        // ignore: use_build_context_synchronously
+                        context);
                   } else {
                     FlutterSnackbar.showSnackbar(
-                        "User creation failed. Try again!", context);
+                        "User creation failed. Try again!",
+                        // ignore: use_build_context_synchronously
+                        context);
                   }
+                  // ignore: use_build_context_synchronously
                   Navigator.pop(context);
                 },
                 child: Container(

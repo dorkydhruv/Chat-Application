@@ -37,25 +37,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
       final token = Token.fromJson(jsonDecode(response.body));
       Helper.storeToken(token.accessToken);
-      final user = await http.get(
-        Uri.parse("$api_url/check-access"),
-        headers: {
-          'Content-Type': 'application/json',
-          "Access-Control-Allow-Origin":
-              "*", // Required for CORS support to work
-          "Access-Control-Allow-Credentials":
-              "true", // Required for cookies, authorization headers with HTTPS
-          "Authorization": token.accessToken,
-        },
-      );
-      final userdata = User.fromJson(jsonDecode(user.body));
-      state = state.copyWith(
-        isLoading: false,
-        isAuth: true,
-        user: userdata,
-      );
-      print(userdata);
-      Helper.storeId(userdata.userId);
+      checkAccess();
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     } finally {
@@ -89,8 +71,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
 
       final user = User.fromJson(jsonDecode(response.body));
-      print(user);
       state.copyWith(isLoading: false, isAuth: false, user: user);
+      Helper.storeId(user.userId);
       return true;
     } catch (e) {
       state.copyWith(isLoading: false, isAuth: false, error: e.toString());
@@ -111,20 +93,20 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         Uri.parse("$api_url/check-access"),
         headers: {
           'Content-Type': 'application/json',
-          "Access-Control-Allow-Origin":
-              "*", // Required for CORS support to work
-          "Access-Control-Allow-Credentials":
-              "true", // Required for cookies, authorization headers with HTTPS
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": "true",
           "Authorization": token,
         },
       );
+      if (user.statusCode == 401) {
+        return false;
+      }
       final userdata = User.fromJson(jsonDecode(user.body));
       state = state.copyWith(
         isLoading: false,
         isAuth: true,
         user: userdata,
       );
-      print(userdata);
       Helper.storeId(userdata.userId);
       return true;
     } catch (e) {
