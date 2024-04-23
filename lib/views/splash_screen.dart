@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chat_app/snackbar.dart';
 import 'package:chat_app/state/auth/notifier/auth_state_notifier.dart';
 import 'package:chat_app/views/access_controller.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +15,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     AuthStateNotifier authStateNotifier = AuthStateNotifier();
-    authStateNotifier.checkAccess().then((b) => print(b));
+    authStateNotifier.checkAccess().then((b) => FlutterSnackbar.showSnackbar(
+        b ? "Welcome back" : "Please authenticate", context));
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => AccessController()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const AccessController()));
     });
     return const Scaffold(
       body: Center(

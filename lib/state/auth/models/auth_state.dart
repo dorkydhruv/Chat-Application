@@ -28,4 +28,23 @@ class AuthState {
       isAuth: false,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AuthState &&
+        other.isLoading == isLoading &&
+        other.isAuth == isAuth &&
+        other.error == error &&
+        other.user == user;
+  }
+
+  @override
+  int get hashCode {
+    return isLoading.hashCode ^
+        isAuth.hashCode ^
+        error.hashCode ^
+        user.hashCode;
+  }
 }

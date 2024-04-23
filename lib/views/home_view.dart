@@ -19,11 +19,25 @@ class HomeView extends ConsumerWidget {
           ),
         ],
       ),
-      body: const Column(
-        children: <Widget>[
-          Text(
-            'Welcome to Home',
-            style: TextStyle(fontSize: 20),
+      body: PageView(
+        children: [
+          Container(
+            color: Colors.red,
+            child: const Center(
+              child: Text('Page 1'),
+            ),
+          ),
+          Container(
+            color: Colors.green,
+            child: const Center(
+              child: Text('Page 2'),
+            ),
+          ),
+          Container(
+            color: Colors.blue,
+            child: const Center(
+              child: Text('Page 3'),
+            ),
           ),
         ],
       ),

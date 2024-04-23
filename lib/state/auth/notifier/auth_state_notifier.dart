@@ -7,6 +7,7 @@ import 'package:chat_app/state/auth/models/token.dart';
 import 'package:chat_app/state/fieldnames.dart';
 import 'package:chat_app/state/user/models/user.dart';
 import 'package:chat_app/state/user/models/user_payload.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -75,7 +76,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       Helper.storeId(user.userId);
       return true;
     } catch (e) {
-      state.copyWith(isLoading: false, isAuth: false, error: e.toString());
+      state =
+          state.copyWith(isLoading: false, isAuth: false, error: e.toString());
       return false;
     } finally {
       state = state.copyWith(isLoading: false);
@@ -107,10 +109,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         isAuth: true,
         user: userdata,
       );
+      print(state.isAuth);
       Helper.storeId(userdata.userId);
       return true;
     } catch (e) {
-      state.copyWith(isLoading: false, isAuth: false, error: e.toString());
+      state =
+          state.copyWith(isLoading: false, isAuth: true, error: e.toString());
       return false;
     } finally {
       state = state.copyWith(isLoading: false);
