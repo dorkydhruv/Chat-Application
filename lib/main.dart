@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:chat_app/state/auth/providers/auth_state_provider.dart';
 import 'package:chat_app/state/auth/providers/is_auth.dart';
 import 'package:chat_app/state/auth/providers/is_loading.dart';
@@ -14,18 +12,13 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'Application',
+      title: 'Chat App',
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark(
         useMaterial3: true,
@@ -43,7 +36,6 @@ class _MyAppState extends State<MyApp> {
               LoadingScreen.instance().hide();
             }
           });
-          ref.read(authStateProvider.notifier).checkAccess();
           final isLoggedIn = ref.watch(isAuthenticated);
           return isLoggedIn ? const HomeView() : const LoginView();
         },
