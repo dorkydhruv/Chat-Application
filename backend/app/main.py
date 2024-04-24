@@ -44,6 +44,10 @@ async def login(user:schemas.UserLogin,db:Session=Depends(get_db)):
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Invalid auth")
 
+@app.get("/search",status_code=status.HTTP_200_OK,response_model=list[schemas.UserOut])
+async def search(name:str="",db:Session=Depends(get_db)):
+    users = db.query(models.Users).where(models.Users.displayName.like(f"%{name}%")).all()
+    return users
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):

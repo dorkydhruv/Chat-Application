@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:chat_app/constants.dart';
-import 'package:chat_app/helper.dart';
+import 'package:chat_app/utils/helper.dart';
 import 'package:chat_app/state/auth/models/auth_state.dart';
 import 'package:chat_app/state/auth/models/token.dart';
 import 'package:chat_app/state/fieldnames.dart';
 import 'package:chat_app/state/user/models/user.dart';
 import 'package:chat_app/state/user/models/user_payload.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

@@ -1,4 +1,4 @@
-import 'package:chat_app/snackbar.dart';
+import 'package:chat_app/utils/snackbar.dart';
 import 'package:chat_app/state/auth/providers/auth_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
