@@ -11,7 +11,7 @@ class HomeView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PageView(
-      children: [
+      children: const [
         ChatsPage(),
         SearchPage(),
         ProfilePage(),

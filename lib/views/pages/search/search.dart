@@ -11,19 +11,20 @@ class SearchPage extends ConsumerWidget {
     final users = ref.watch(searchUserProvider(controller.text));
     return Scaffold(
         appBar: AppBar(
-          title: Text('Search for friends'),
+          title: const Text('Search for friends'),
           actions: [
-            SearchBar(
-              controller: controller,
-              onChanged: (value) async =>
-                  await ref.refresh(searchUserProvider(value)),
-            )
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                ref.refresh(searchUserProvider(controller.text));
+              },
+            ),
           ],
         ),
         body: Center(
           child: Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.8,
+            margin: const EdgeInsets.all(10),
+            constraints: const BoxConstraints(
               minHeight: 0,
             ),
             alignment: Alignment.center,
