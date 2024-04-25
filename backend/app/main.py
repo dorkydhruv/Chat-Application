@@ -6,6 +6,7 @@ from . import schemas
 from . import models
 from . import utils
 from . import oauth
+from .routers import chat
 app = FastAPI()
 origins=[
     "*",

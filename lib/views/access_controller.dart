@@ -21,7 +21,6 @@ class AccessController extends StatelessWidget {
           }
         });
         final isLoggedIn = ref.watch(isAuthenticated);
-        print(isLoggedIn);
         return isLoggedIn ? const HomeView() : const LoginView();
       },
     );

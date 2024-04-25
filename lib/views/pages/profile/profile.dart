@@ -17,7 +17,6 @@ class ProfilePage extends ConsumerWidget {
               icon: const Icon(Icons.logout),
               onPressed: () async {
                 await ref.read(authStateProvider.notifier).logout();
-                Navigator.pop(context);
               },
             ),
           ],

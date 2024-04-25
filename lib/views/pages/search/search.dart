@@ -1,4 +1,5 @@
 import 'package:chat_app/state/user/providers/search_user_provider.dart';
+import 'package:chat_app/views/components/user_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -16,6 +17,7 @@ class SearchPage extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
+                // ignore: unused_result
                 ref.refresh(searchUserProvider(controller.text));
               },
             ),
@@ -38,10 +40,7 @@ class SearchPage extends ConsumerWidget {
                 itemCount: users.length,
                 itemBuilder: (context, index) {
                   final user = users.elementAt(index);
-                  return ListTile(
-                    title: Text(user.displayName),
-                    subtitle: Text(user.email ?? ""),
-                  );
+                  return UserTile(user: user);
                 },
               ),
               error: (e, s) => Center(child: Text("Error: $e")),

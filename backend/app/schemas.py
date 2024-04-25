@@ -17,3 +17,7 @@ class UserOut(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+class ChatCreate(BaseModel):
+    user1:int
+    user2:int

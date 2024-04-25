@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chat_app/views/loading/loading_screencontroller.dart';
+import 'package:chat_app/views/loading/loading_screen_controller.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreen {

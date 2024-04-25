@@ -1,4 +1,3 @@
-import 'package:chat_app/state/auth/providers/auth_state_provider.dart';
 import 'package:chat_app/views/pages/chat/chats.dart';
 import 'package:chat_app/views/pages/profile/profile.dart';
 import 'package:chat_app/views/pages/search/search.dart';
