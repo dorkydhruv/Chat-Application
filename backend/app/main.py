@@ -8,6 +8,11 @@ from . import utils
 from . import oauth
 from .routers import chat
 app = FastAPI()
+# Create all tables
+Base.metadata.create_all(bind=engine)
+# Include routers
+app.include_router(chat.router)
+#include origins and cors policies
 origins=[
     "*",
 ]

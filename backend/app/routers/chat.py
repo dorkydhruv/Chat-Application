@@ -1,6 +1,7 @@
 import asyncio
 from fastapi import APIRouter, Depends, HTTPException,WebSocket
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from app.database import get_db,Base
 from app.models import Chats
 from app.models import Messages
@@ -12,6 +13,7 @@ router = APIRouter(
 
 @router.post("/create")
 def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
+    chat = Chats(user1=chat.user1,user2=chat.user2)
     db.add(chat)
     db.commit()
     db.refresh(chat)
@@ -19,7 +21,7 @@ def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
 
 @router.get("/get/{user}")
 def get_chats(user:int,db:Session=Depends(get_db)):
-    chats = db.query(Chats).filter(Chats.user1==user or Chats.user2==user).all()
+    chats = db.query(Chats).filter(or_(Chats.user1==user,Chats.user2==user)).all()
     return chats
 
 @router.websocket("/ws/get-messages/{chat}")

@@ -21,3 +21,4 @@ class UserLogin(BaseModel):
 class ChatCreate(BaseModel):
     user1:int
     user2:int
+    
