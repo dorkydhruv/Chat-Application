@@ -6,11 +6,13 @@ from app.database import get_db,Base
 from app.models import Chats
 from app.models import Messages
 from app import schemas
+from ..oauth import get_current_user
 router = APIRouter(
     prefix="/chat",
     tags=["chat"],
 )
 
+#Create Chat
 @router.post("/create")
 def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
     chat = Chats(user1=chat.user1,user2=chat.user2)
@@ -19,24 +21,28 @@ def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
     db.refresh(chat)
     return chat
 
+#Get all chats where user is part of
 @router.get("/get/{user}")
 def get_chats(user:int,db:Session=Depends(get_db)):
     chats = db.query(Chats).filter(or_(Chats.user1==user,Chats.user2==user)).all()
     return chats
 
-@router.websocket("/ws/get-messages/{chat}")
-async def message_Endpoint(websocket: WebSocket, chat: int, db: Session = Depends(get_db)):
+#Get messages of the particular chat
+#Should work on this again.
+@router.websocket("/messages/{chat}/{userId}")
+async def message_Endpoint(websocket: WebSocket, chat: int,userId:int, db: Session = Depends(get_db)):
     await websocket.accept()
-    while True:
-        messages = db.query(Messages).filter(Messages.chatId == chat).all()
-        for message in messages:
-            await websocket.send_text(str(message))
-        await asyncio.sleep(1)
-
-@router.post("/send-message")
-def send_message(chat:int,user:int,message:str,db:Session=Depends(get_db)):
-    msg = Messages(chatId=chat,userId=user,message=message)
-    db.add(msg)
-    db.commit()
-    db.refresh(msg)
-    return msg
+    messages = db.query(Messages).filter(Messages.chatId == chat).all()
+    for message in messages:
+                await websocket.send_text(f"{message.userId}: {message.message}")
+    try:
+        while True:
+            data = await websocket.receive_text()
+            message = Messages(chatId=chat, userId=userId, message=data)
+            db.add(message)
+            db.commit()
+            db.refresh(message)
+            await websocket.send_text(f"{message.userId}: {message.message}")
+    except:
+        pass
+    
