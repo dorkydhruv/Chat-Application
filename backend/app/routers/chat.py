@@ -6,25 +6,24 @@ from app.database import get_db,Base
 from app.models import Chats
 from app.models import Messages
 from app import schemas
-from ..oauth import get_current_user
 router = APIRouter(
     prefix="/chat",
     tags=["chat"],
 )
 
 #Create Chat
-@router.post("/create")
+@router.post("/create",response_model=schemas.ChatOut)
 def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
-    chat = Chats(user1=chat.user1,user2=chat.user2)
+    chat = Chats(user1_id=chat.user1_id,user2_id=chat.user2_id)
     db.add(chat)
     db.commit()
     db.refresh(chat)
     return chat
 
 #Get all chats where user is part of
-@router.get("/get/{user}")
-def get_chats(user:int,db:Session=Depends(get_db)):
-    chats = db.query(Chats).filter(or_(Chats.user1==user,Chats.user2==user)).all()
+@router.get("/get/{user_id}",response_model=list[schemas.ChatOut])
+def get_chats(user_id:int,db:Session=Depends(get_db)):
+    chats = db.query(Chats).filter(or_(Chats.user1_id==user_id,Chats.user2_id==user_id)).all()
     return chats
 
 #Get messages of the particular chat

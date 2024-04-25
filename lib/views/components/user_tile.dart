@@ -7,17 +7,14 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/chat'),
-      child: ListTile(
-        hoverColor: Colors.deepPurpleAccent[500],
-        leading: CircleAvatar(
-          radius: 30,
-          child: Text(user.displayName[0]),
-        ),
-        title: Text(user.displayName),
-        subtitle: Text(user.email ?? ""),
+    return ListTile(
+      hoverColor: Colors.deepPurpleAccent[500],
+      leading: CircleAvatar(
+        radius: 30,
+        child: Text(user.displayName[0]),
       ),
+      title: Text(user.displayName),
+      subtitle: Text(user.email ?? ""),
     );
   }
 }

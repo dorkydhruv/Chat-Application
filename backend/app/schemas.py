@@ -19,6 +19,12 @@ class UserLogin(BaseModel):
     password: str
 
 class ChatCreate(BaseModel):
-    user1:int
-    user2:int
-    
+    user1_id:int
+    user2_id:int
+
+class ChatOut(BaseModel):
+    chatId: int
+    user1: UserOut
+    user2: UserOut
+    class Config:
+        from_attributes = True
