@@ -1,7 +1,8 @@
 import 'package:chat_app/state/chat/providers/create_chat_provider.dart';
 import 'package:chat_app/state/user/providers/search_user_provider.dart';
+import 'package:chat_app/utils/snackbar.dart';
 import 'package:chat_app/views/components/user_tile.dart';
-import 'package:chat_app/views/loading/loading.dart';
+import 'package:chat_app/views/pages/chat/individual_chat.dart.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -44,15 +45,21 @@ class SearchPage extends ConsumerWidget {
                   final user = users.elementAt(index);
                   return GestureDetector(
                     onTap: () async {
+                      //Get the userId of the user you want to chat with
                       final anotherUserId = user.userId;
-                      final chat = ref.read(createChatProvider(anotherUserId));
+                      //Read the createChatProvider
+                      final chat = ref.watch(createChatProvider(anotherUserId));
                       chat.when(
                         data: (chat) {
-                          print(chat);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  IndividualChat(chat: chat)));
                         },
-                        error: (e, s) => Center(child: Text("Error: $e")),
+                        error: (e, s) {
+                          FlutterSnackbar.showSnackbar(e.toString(), context);
+                        },
                         loading: () =>
-                            LoadingScreen.instance().show(context: context),
+                            FlutterSnackbar.showSnackbar("Loading...", context),
                       );
                     },
                     child: UserTile(

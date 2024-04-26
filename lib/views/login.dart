@@ -48,6 +48,8 @@ class LoginView extends ConsumerWidget {
                             controller: emailController,
                           ),
                           TextField(
+                            obscureText: true,
+                            obscuringCharacter: "#",
                             decoration: const InputDecoration(
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(20),
