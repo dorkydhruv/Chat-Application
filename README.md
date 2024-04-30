@@ -1,16 +1,16 @@
-# chat_app
+# Chat-Application
+A clear explanation of what your application does and its key features. Mention the use of websockets for real-time messaging, WebRTC for video calling, FastAPI for the backend API.
 
-A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites:
+- Flutter
+- Python
+- WebRTC
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Installation:
+- Clone the repo
+- flutter run
+- cd backend
+- uvicorn app.main:app --reload
