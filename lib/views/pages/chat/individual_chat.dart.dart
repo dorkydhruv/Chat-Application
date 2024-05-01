@@ -80,10 +80,6 @@ class IndividualChat extends ConsumerWidget {
                   icon: const Icon(Icons.send),
                   onPressed: () {
                     if (controller.text.isNotEmpty) {
-                      ref
-                          .read(wsConnectionProvider(chat))
-                          .sink
-                          .add(controller.text);
                       ws.sink.add(controller.text);
                       controller.clear();
                     }

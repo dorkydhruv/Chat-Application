@@ -14,6 +14,9 @@ router = APIRouter(
 #Create Chat
 @router.post("/create",response_model=schemas.ChatOut)
 def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
+    existing_chat = db.query(Chats).filter(or_(Chats.user1_id==chat.user1_id,Chats.user2_id==chat.user1_id)).first()
+    if existing_chat:
+        return existing_chat
     chat = Chats(user1_id=chat.user1_id,user2_id=chat.user2_id)
     db.add(chat)
     db.commit()
@@ -44,4 +47,5 @@ async def message_Endpoint(websocket: WebSocket, chat: int,userId:int, db: Sessi
             await websocket.send_text(f"{message.userId}: {message.message}")
     except:
         pass
-    
+
+

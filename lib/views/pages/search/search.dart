@@ -1,3 +1,4 @@
+import 'package:chat_app/state/auth/providers/user_provider.dart';
 import 'package:chat_app/state/chat/providers/create_chat_provider.dart';
 import 'package:chat_app/state/user/providers/search_user_provider.dart';
 import 'package:chat_app/utils/snackbar.dart';
@@ -43,12 +44,16 @@ class SearchPage extends ConsumerWidget {
                 itemCount: users.length,
                 itemBuilder: (context, index) {
                   final user = users.elementAt(index);
+                  if (user.userId == ref.read(userProvider)!.userId) {
+                    return const SizedBox.shrink();
+                  }
                   return GestureDetector(
                     onTap: () async {
                       //Get the userId of the user you want to chat with
                       final anotherUserId = user.userId;
                       //Read the createChatProvider
-                      final chat = ref.watch(createChatProvider(anotherUserId));
+                      final chat =
+                          await ref.watch(createChatProvider(anotherUserId));
                       chat.when(
                         data: (chat) {
                           Navigator.of(context).push(MaterialPageRoute(
