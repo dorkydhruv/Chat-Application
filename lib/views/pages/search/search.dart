@@ -52,8 +52,7 @@ class SearchPage extends ConsumerWidget {
                       //Get the userId of the user you want to chat with
                       final anotherUserId = user.userId;
                       //Read the createChatProvider
-                      final chat =
-                          await ref.watch(createChatProvider(anotherUserId));
+                      final chat = ref.watch(createChatProvider(anotherUserId));
                       chat.when(
                         data: (chat) {
                           Navigator.of(context).push(MaterialPageRoute(
