@@ -12,7 +12,7 @@ class ConnectionMessenger:
         connection_id = str(uuid.uuid4())
         self.active_connections[connection_id] = ws
 
-        await self.send_message_to(ws,json.dumps({"type":"connect","id":id}))
+        await self.send_message_to(ws,json.dumps({"type":"connect","id":connection_id}))
     
     async def disconnect(self,ws:WebSocket):
         connection_id = self.find_connection_id(ws)

@@ -1,4 +1,5 @@
 import asyncio
+import json
 from fastapi import APIRouter, Depends, HTTPException,WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
@@ -11,7 +12,7 @@ router = APIRouter(
     prefix="/chat",
     tags=["chat"],
 )
-connection_messenger = ConnectionMessenger()
+
 #Create Chat
 @router.post("/create",response_model=schemas.ChatOut)
 def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
@@ -29,19 +30,25 @@ def create_chat(chat:schemas.ChatCreate,db:Session=Depends(get_db)):
 def get_chats(user_id:int,db:Session=Depends(get_db)):
     chats = db.query(Chats).filter(or_(Chats.user1_id==user_id,Chats.user2_id==user_id)).all()
     return chats
-
 #Get messages of the particular chat
 #Should work on this again.
-@router.websocket("/messages/{chat}")
-async def message_Endpoint(websocket: WebSocket, chat: int, db: Session = Depends(get_db)):
+@router.websocket("/messages")
+async def message_Endpoint(websocket: WebSocket,chat_id=int,  db: Session = Depends(get_db)):
 
+    connection_messenger = ConnectionMessenger()
     await connection_messenger.connect(websocket)
     try:
         while True:
             data = await websocket.receive_text()
-            await connection_messenger.broadcast(data)
+            message = json.dumps(
+                {
+                    "type":"message",
+                    "data":data,
+                }
+            )
+            await connection_messenger.broadcast(message)
     except WebSocketDisconnect:
         id =await connection_messenger.disconnect(websocket)
-        await connection_messenger.broadcast({"type":"disconnect","id":id})
-
+        await connection_messenger.broadcast(json.dumps({"type":"disconnect","id":id}))
+        print("disconnected")
 
