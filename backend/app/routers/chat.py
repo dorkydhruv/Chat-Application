@@ -32,23 +32,25 @@ def get_chats(user_id:int,db:Session=Depends(get_db)):
     return chats
 #Get messages of the particular chat
 #Should work on this again.
+connection_messenger = ConnectionMessenger()
 @router.websocket("/messages")
 async def message_Endpoint(websocket: WebSocket,chat_id=int,  db: Session = Depends(get_db)):
-
-    connection_messenger = ConnectionMessenger()
+    
     await connection_messenger.connect(websocket)
     try:
         while True:
             data = await websocket.receive_text()
+            id = connection_messenger.find_connection_id(websocket)
             message = json.dumps(
                 {
                     "type":"message",
                     "data":data,
+                    "id":id
                 }
             )
             await connection_messenger.broadcast(message)
     except WebSocketDisconnect:
         id =await connection_messenger.disconnect(websocket)
-        await connection_messenger.broadcast(json.dumps({"type":"disconnect","id":id}))
+        await connection_messenger.broadcast(json.dumps({"type":"disconnect","data":"","id":id}))
         print("disconnected")
 
