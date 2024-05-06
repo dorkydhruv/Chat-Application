@@ -1,95 +1,68 @@
 import 'package:chat_app/state/chat/models/chat.dart';
-import 'package:chat_app/state/messages/providers/ws_connection_provider.dart.dart';
-import 'package:chat_app/state/messages/providers/ws_messages_provider.dart';
+import 'package:chat_app/state/messages/message.dart';
+import 'package:chat_app/utils/snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
-class IndividualChat extends ConsumerWidget {
+class IndividualChat extends StatefulWidget {
   final Chat chat;
   const IndividualChat({super.key, required this.chat});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final messages = ref.watch(wsChatProvider(chat));
-    final ws = ref.watch(wsConnectionProvider(chat));
-    final controller = TextEditingController();
+  State<IndividualChat> createState() => _IndividualChatState();
+}
+
+class _IndividualChatState extends State<IndividualChat> {
+  final channel = WebSocketChannel.connect(
+    Uri.parse(
+      "ws://localhost:8000/chat/messages/",
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final reciepent = widget.chat.user2.displayName;
+    late final String myId;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(chat.user2.displayName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.video_call),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Expanded(
-            child: messages.when(
-              data: (messages) {
-                if (messages.isEmpty) {
-                  return const Center(
-                    child: Text('No messages yet'),
-                  );
-                }
-                return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages.elementAt(index);
-                    return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.indigoAccent[400],
-                          child: Text(
-                            message.userId == chat.user1.userId
-                                ? chat.user1.displayName[0]
-                                : chat.user2.displayName[0],
-                          ),
-                        ),
-                        title: Text(message.message),
-                        isThreeLine: true,
-                        subtitle: Text(
-                          message.userId == chat.user1.userId
-                              ? chat.user1.displayName
-                              : chat.user2.displayName,
-                        ));
-                  },
-                );
-              },
-              error: (e, s) => Text(e.toString()),
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
+        appBar: AppBar(
+          title: Text(widget.chat.user2.displayName),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder(
+                stream: channel.stream,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final messageFromServer = Message.fromJson(snapshot.data);
+                  if (messageFromServer.type == "connect") {
+                    myId = messageFromServer.id;
+                    FlutterSnackbar.showSnackbar("Connected", context);
+                  } else if (messageFromServer.type == "disconnect") {
+                    FlutterSnackbar.showSnackbar(
+                        "$reciepent disconnected", context);
+                  }
+                  return messageFromServer.data == ""
+                      ? Container()
+                      : ListTile(
+                          leading: myId == messageFromServer.id
+                              ? const Icon(Icons.person)
+                              : const Icon(Icons.person_outline),
+                          title: Text(messageFromServer.data),
+                        );
+                },
               ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onSubmitted: (value) {
-                      if (value.isNotEmpty) {
-                        ws.sink.add(value);
-                      }
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () {
-                    if (controller.text.isNotEmpty) {
-                      ws.sink.add(controller.text);
-                      controller.clear();
-                    }
-                  },
-                )
-              ],
+            TextField(
+              onSubmitted: (value) {
+                channel.sink.add(value);
+              },
             ),
-          )
-        ],
-      ),
-    );
+          ],
+        ));
   }
 }

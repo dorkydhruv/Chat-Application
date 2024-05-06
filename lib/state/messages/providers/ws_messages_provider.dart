@@ -10,7 +10,7 @@ final wsChatProvider = StreamProvider.family<List<Message>, Chat>((ref, chat) {
   final ws = ref.watch(wsConnectionProvider(chat));
   ws.stream.listen(
     (data) {
-      final message = Message.fromString(data);
+      final message = Message.fromJson(data);
       messages.add(message);
       controller.add([...messages, message]);
     },
