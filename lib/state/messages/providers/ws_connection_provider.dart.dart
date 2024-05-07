@@ -6,7 +6,7 @@ final wsConnectionProvider =
     Provider.family<WebSocketChannel, Chat>((ref, chat) {
   final ws = WebSocketChannel.connect(
     Uri.parse(
-      "ws://localhost:8000/chat/messages/",
+      "ws://localhost:8000/chat/messages/${chat.chatId}",
     ),
   );
   return ws;

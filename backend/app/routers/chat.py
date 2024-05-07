@@ -33,24 +33,43 @@ def get_chats(user_id:int,db:Session=Depends(get_db)):
 #Get messages of the particular chat
 #Should work on this again.
 connection_messenger = ConnectionMessenger()
-@router.websocket("/messages")
+@router.websocket("/messages/{chat_id}")
 async def message_Endpoint(websocket: WebSocket,chat_id=int,  db: Session = Depends(get_db)):
-    
     await connection_messenger.connect(websocket)
+    messages = db.query(Messages).filter(Messages.chatId==chat_id).all()
+
+    for message in messages:
+        payload = {
+            "messageId":message.messageId,
+            "chatId":message.chatId,
+            "message":message.message,
+            "userId":message.userId
+        }
+        print(payload)
+        await websocket.send_json(payload)
+        # await websocket.send_text(json.dumps(payload))
     try:
         while True:
-            data = await websocket.receive_text()
-            id = connection_messenger.find_connection_id(websocket)
-            message = json.dumps(
-                {
-                    "type":"message",
-                    "data":data,
-                    "id":id
+            data = await websocket.receive_json()
+            message = data
+            '''
+                data= {
+                    "message": "Hello",
+                    "userId" : 1,
                 }
-            )
-            await connection_messenger.broadcast(message)
+            '''
+            #Save the message to the database
+            m = Messages(chatId=chat_id,message=message["message"],userId=message["userId"])
+            db.add(m)
+            db.commit()
+            db.refresh(m)
+            payload = {
+                "messageId":m.messageId,
+                "chatId":m.chatId,
+                "message":m.message,
+                "userId":m.userId
+            }
+            await connection_messenger.broadcast(payload)
     except WebSocketDisconnect:
         id =await connection_messenger.disconnect(websocket)
-        await connection_messenger.broadcast(json.dumps({"type":"disconnect","data":"","id":id}))
-        print("disconnected")
 

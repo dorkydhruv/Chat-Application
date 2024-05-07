@@ -4,23 +4,27 @@ import 'package:flutter/material.dart';
 
 @immutable
 class Message extends MapView<String, String> {
-  final String id;
-  final String data;
-  final String type;
+  final int messageId;
+  final String message;
+  final int userId;
+  final int chatId;
   Message({
-    required this.id,
-    required this.data,
-    required this.type,
+    required this.messageId,
+    required this.message,
+    required this.userId,
+    required this.chatId,
   }) : super({
-          'id': id,
-          'data': data,
-          'type': type,
+          'messageId': messageId.toString(),
+          'message': message,
+          'userId': userId.toString(),
+          'chatId': chatId.toString(),
         });
 
   Message.fromJson(final Map<String, dynamic> json)
       : this(
-          id: json['id'],
-          data: json['data'],
-          type: json['type'],
+          messageId: json['messageId']!,
+          message: json['message']!,
+          userId: json['userId']!,
+          chatId: json['chatId']!,
         );
 }

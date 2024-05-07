@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:chat_app/constants.dart';
 import 'package:chat_app/state/auth/providers/user_provider.dart';
@@ -18,6 +19,11 @@ final chatProvider = FutureProvider<Iterable<Chat>>((ref) async {
     },
   );
   final body = jsonDecode(response.body) as List;
-  final chats = body.map((chat) => Chat.fromJson(chat)).toList();
+  late final List<Chat> chats;
+  try {
+    chats = body.map((chat) => Chat.fromJson(chat)).toList();
+  } catch (e) {
+    log(e.toString());
+  }
   return chats;
 });

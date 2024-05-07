@@ -1,68 +1,95 @@
+import 'dart:convert';
+
 import 'package:chat_app/state/chat/models/chat.dart';
 import 'package:chat_app/state/messages/message.dart';
-import 'package:chat_app/utils/snackbar.dart';
+import 'package:chat_app/state/messages/providers/ws_connection_provider.dart.dart';
+import 'package:chat_app/state/messages/providers/ws_messages_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:web_socket_channel/status.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class IndividualChat extends StatefulWidget {
+class IndividualChat extends ConsumerWidget {
   final Chat chat;
   const IndividualChat({super.key, required this.chat});
 
   @override
-  State<IndividualChat> createState() => _IndividualChatState();
-}
-
-class _IndividualChatState extends State<IndividualChat> {
-  final channel = WebSocketChannel.connect(
-    Uri.parse(
-      "ws://localhost:8000/chat/messages/",
-    ),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    final reciepent = widget.chat.user2.displayName;
-    late final String myId;
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Message> messages = [];
+    final wsChannel = WebSocketChannel.connect(
+        Uri.parse("ws://localhost:8000/chat/messages/${chat.chatId}"));
+    TextEditingController messageController = TextEditingController();
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.chat.user2.displayName),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder(
-                stream: channel.stream,
+      appBar: AppBar(
+        title: Text(chat.user2.displayName),
+      ),
+      body: SafeArea(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Expanded(
+            child: StreamBuilder(
+                stream: wsChannel.stream,
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  final messageFromServer = Message.fromJson(snapshot.data);
-                  if (messageFromServer.type == "connect") {
-                    myId = messageFromServer.id;
-                    FlutterSnackbar.showSnackbar("Connected", context);
-                  } else if (messageFromServer.type == "disconnect") {
-                    FlutterSnackbar.showSnackbar(
-                        "$reciepent disconnected", context);
-                  }
-                  return messageFromServer.data == ""
-                      ? Container()
-                      : ListTile(
-                          leading: myId == messageFromServer.id
-                              ? const Icon(Icons.person)
-                              : const Icon(Icons.person_outline),
-                          title: Text(messageFromServer.data),
-                        );
+                  final messageFromServer = jsonDecode(snapshot.data);
+                  final message = Message.fromJson(messageFromServer);
+                  messages.add(message);
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      final message = messages.elementAt(index);
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: [Colors.red, Colors.blue].elementAt(
+                              message.userId == chat.user1.userId ? 0 : 1),
+                          child: Text(message.userId == chat.user1.userId
+                              ? chat.user1.displayName[0]
+                              : chat.user2.displayName[0]),
+                        ),
+                        title: Text(
+                          message.userId == chat.user1.userId
+                              ? chat.user1.displayName
+                              : chat.user2.displayName,
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                        subtitle: Text(
+                          message.message,
+                          style: const TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      );
+                    },
+                    itemCount: messages.length,
+                  );
+                }),
+          ),
+          TextField(
+            controller: messageController,
+            onSubmitted: (value) {
+              wsChannel.sink.add(jsonEncode({
+                "message": messageController.text.trim(),
+                "userId": chat.user1.userId
+              }));
+              messageController.clear();
+            },
+            decoration: InputDecoration(
+              hintText: 'Type a message',
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: () {
+                  wsChannel.sink.add(jsonEncode({
+                    "message": messageController.text.trim(),
+                    "userId": chat.user1.userId
+                  }));
+                  messageController.clear();
                 },
               ),
             ),
-            TextField(
-              onSubmitted: (value) {
-                channel.sink.add(value);
-              },
-            ),
-          ],
-        ));
+          ),
+        ],
+      )),
+    );
   }
 }
