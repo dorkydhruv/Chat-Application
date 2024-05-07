@@ -24,7 +24,7 @@ class ChatsPage extends ConsumerWidget {
                       builder: (context) => IndividualChat(chat: chat)));
                 },
                 child: UserTile(
-                  user: chat.user2,
+                  user: chat.user1,
                 ),
               );
             },
