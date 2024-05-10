@@ -126,6 +126,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     await _localVideoRenderer.dispose();
     await _remoteVideoRenderer.dispose();
     _peerConnection!.close();
+    _localStream!.dispose();
     super.dispose();
   }
 
@@ -135,10 +136,16 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
       child: Row(
         children: [
           Expanded(
-            child: RTCVideoView(_localVideoRenderer),
+            child: RTCVideoView(
+              _localVideoRenderer,
+              mirror: true,
+            ),
           ),
           Expanded(
-            child: RTCVideoView(_remoteVideoRenderer),
+            child: RTCVideoView(
+              _remoteVideoRenderer,
+              mirror: true,
+            ),
           ),
         ],
       ),

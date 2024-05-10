@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:chat_app/state/chat/models/chat.dart';
 import 'package:chat_app/state/messages/message.dart';
+import 'package:chat_app/views/video_call_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -13,11 +14,22 @@ class IndividualChat extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<Message> messages = [];
     final wsChannel = WebSocketChannel.connect(
-        Uri.parse("ws://10.0.2.2:8000/chat/messages/${chat.chatId}"));
+        Uri.parse("ws://localhost:8000/chat/messages/${chat.chatId}"));
     TextEditingController messageController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Text(chat.user1.displayName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.video_call),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => VideoCallScreen(chat: chat))),
+          ),
+        ],
       ),
       body: SafeArea(
           child: Column(

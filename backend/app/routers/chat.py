@@ -7,6 +7,7 @@ from app.database import get_db,Base
 from app.models import Chats
 from app.models import Messages
 from app import schemas
+from .video_connection_manager import VideoConnectionManager
 from .connection_messenger import ConnectionMessenger
 router = APIRouter(
     prefix="/chat",
@@ -72,4 +73,19 @@ async def message_Endpoint(websocket: WebSocket,chat_id=int,  db: Session = Depe
             await connection_messenger.broadcast(payload)
     except WebSocketDisconnect:
         id =await connection_messenger.disconnect(websocket)
+
+#Send and accept candidates using websockets
+video_connection_manager = VideoConnectionManager()
+@router.websocket("/candidates/{chat_id}")
+async def candidate_endpoint(websocket: WebSocket,chat_id:int):
+    await video_connection_manager.connect(websocket,chat_id)
+    try:
+        while True:
+            messageFromIceCandidate = await websocket.receive_json()
+            if messageFromIceCandidate["type"] == "offer":
+                await video_connection_manager.broadcast(chat_id,json.loads(messageFromIceCandidate["data"]))
+            else:
+                await video_connection_manager.send_message_to_initiator(chat_id,json.loads(messageFromIceCandidate["data"]))
+    except WebSocketDisconnect:
+        await video_connection_manager.disconnect(websocket,chat_id)
 

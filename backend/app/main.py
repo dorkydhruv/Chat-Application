@@ -64,6 +64,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/check-access")
 def test(user: schemas.UserOut = Depends(oauth.get_current_user)):
+    print(user)
     return user
 
 
