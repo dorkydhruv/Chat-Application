@@ -22,6 +22,6 @@ class VideoConnectionManager:
             for ws in self.active_rooms[room_id]:
                 if ws != self.initiators[room_id]:
                     await ws.send_json(message)
-                
+                         
     async def send_message_to_initiator(self,room_id:int,message:dict):
         await self.initiators[room_id].send_json(message)

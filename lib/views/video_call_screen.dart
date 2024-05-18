@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chat_app/state/chat/models/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class VideoCallScreen extends StatefulWidget {
   final Chat chat;
@@ -78,13 +79,14 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     return peerConnection;
   }
 
-  Future<void> createOffer() async {
+  Future<String> createOffer() async {
     RTCSessionDescription description =
         await _peerConnection!.createOffer({"offerToReceiveVideo": 1});
     final session = description.sdp.toString();
     await _peerConnection!.setLocalDescription(description);
     print(jsonEncode(session));
     _offer = true;
+    return jsonEncode(session);
   }
 
   void createAnswer() async {
@@ -154,15 +156,48 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ws = WebSocketChannel.connect(
+        Uri.parse("ws://localhost:8000/chat/candidates/${widget.chat.chatId}"));
+    ws.stream.listen((event) {
+      final data = jsonDecode(event);
+      switch (data["type"]) {
+        case "offer":
+          setState(() {
+            _offer = false;
+          });
+          _setRemoteDescription(data["session"]);
+          createAnswer();
+          break;
+        case "answer":
+          setState(() {
+            _offer = true;
+          });
+          _setRemoteDescription(data["session"]);
+          break;
+        case "candidate":
+          addCandidate(data["session"]);
+          break;
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: Center(
-          child: Text("Calling ${widget.chat.user1.displayName}"),
+          child: Text("In call with ${widget.chat.user1.displayName}"),
         ),
       ),
       body: Column(
         children: [
           _videoRenderers(),
+          ElevatedButton(
+            onPressed: () async {
+              final offer = await createOffer();
+              ws.sink.add(jsonEncode({
+                "type": "offer",
+                "session": offer,
+              }));
+            },
+            child: const Text("Call"),
+          ),
         ],
       ),
     );

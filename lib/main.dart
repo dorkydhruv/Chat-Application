@@ -9,19 +9,19 @@ void main() {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-        title: 'Chat App',
-        debugShowCheckedModeBanner: false,
-        darkTheme: ThemeData.dark(
-          useMaterial3: true,
-        ),
-        theme: ThemeData.dark(
-          useMaterial3: true,
-        ),
-        themeMode: ThemeMode.dark,
-        home: const SplashScreen());
+      title: 'Chat App',
+      debugShowCheckedModeBanner: false,
+      darkTheme: ThemeData.dark(
+        useMaterial3: true,
+      ),
+      theme: ThemeData.dark(
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.dark,
+      home: const SplashScreen(),
+    );
   }
 }

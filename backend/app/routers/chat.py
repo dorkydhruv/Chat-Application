@@ -83,9 +83,8 @@ async def candidate_endpoint(websocket: WebSocket,chat_id:int):
         while True:
             messageFromIceCandidate = await websocket.receive_json()
             if messageFromIceCandidate["type"] == "offer":
-                await video_connection_manager.broadcast(chat_id,json.loads(messageFromIceCandidate["data"]))
+                await video_connection_manager.broadcast(chat_id,json.loads(messageFromIceCandidate["session"]))
             else:
-                await video_connection_manager.send_message_to_initiator(chat_id,json.loads(messageFromIceCandidate["data"]))
+                await video_connection_manager.send_message_to_initiator(chat_id,json.loads(messageFromIceCandidate["session"]))
     except WebSocketDisconnect:
         await video_connection_manager.disconnect(websocket,chat_id)
-
