@@ -82,6 +82,7 @@ async def candidate_endpoint(websocket: WebSocket,chat_id:int):
     try:
         while True:
             messageFromIceCandidate = await websocket.receive_json()
+            print(messageFromIceCandidate)
             if messageFromIceCandidate["type"] == "offer":
                 await video_connection_manager.broadcast(chat_id,json.loads(messageFromIceCandidate["session"]))
             else:
