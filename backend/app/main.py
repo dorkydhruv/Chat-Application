@@ -7,6 +7,8 @@ from . import models
 from . import utils
 from . import oauth
 from .routers import chat
+from .routers.webrtc import socket_app
+
 app = FastAPI()
 # Create all tables
 Base.metadata.create_all(bind=engine)
@@ -68,3 +70,7 @@ def test(user: schemas.UserOut = Depends(oauth.get_current_user)):
     return user
 
 
+app.mount("/webrtc",socket_app)
+@app.get("/webrtc",status_code=status.HTTP_200_OK)
+async def get_webrtc():
+    return "Webrtc is up and running."

@@ -120,6 +120,9 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     _createPeerConnection().then((peerConnection) {
       _peerConnection = peerConnection;
     });
+    createOffer().then((offer) {
+      print(offer);
+    });
     super.initState();
   }
 
