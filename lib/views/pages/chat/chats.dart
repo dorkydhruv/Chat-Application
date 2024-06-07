@@ -9,7 +9,7 @@ class ChatsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chats = ref.watch(chatProvider);
+    final chats = ref.read(chatProvider);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Chats'),
